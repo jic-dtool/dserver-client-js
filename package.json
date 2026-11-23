@@ -38,7 +38,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/livMatS/dserver-client-js"
+    "url": "https://github.com/jic-dtool/dserver-client-js"
   },
   "dependencies": {
     "spark-md5": "^3.0.2"
