@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Fixed
+
+- `getDependencyGraph()` fetches every page of the graph; it returned only
+  the first page (10 datasets by default). It uses the server's dependency
+  keys unless custom keys are given.
+
 ## [0.1.0] - 2025-12-08
 
 Initial release of the dserver TypeScript/JavaScript client.

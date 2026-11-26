@@ -54,6 +54,9 @@ import {
 
 import SparkMD5 from "spark-md5";
 
+/** Page size for fetching dependency graphs (the server's maximum). */
+const GRAPH_PAGE_SIZE = 100;
+
 /**
  * Pull a human-readable message out of a dserver error body, if present.
  */
@@ -935,25 +938,46 @@ export class DServerClient {
   // =========================================================================
 
   /**
-   * Get dependency graph for a dataset by UUID
-   * Returns all datasets in the same dependency graph (bidirectional traversal)
+   * Get the dependency graph of a dataset by UUID
+   * Returns all datasets in the same dependency graph (bidirectional traversal),
+   * fetching every page of the paginated response.
    * Requires dserver-dependency-graph-plugin to be installed
    *
    * @param uuid - Dataset UUID
-   * @param dependencyKeys - Optional array of custom dependency keys (e.g., ["readme.derived_from.uuid"])
-   * @returns Array of datasets in the dependency graph with derived_from relationships
+   * @param dependencyKeys - Optional custom dependency keys (e.g.,
+   *   ["readme_parsed.derived_from.uuid"]); honored only if the server allows
+   *   dynamic dependency keys. Omit to use the server's keys.
+   * @returns Datasets in the dependency graph, each with derived_from: the
+   *   UUIDs of its parents within the graph
    */
   async getDependencyGraph(uuid: string, dependencyKeys?: string[]): Promise<GraphDatasetEntry[]> {
     const encodedUuid = encodeURIComponent(uuid);
-    if (dependencyKeys && dependencyKeys.length > 0) {
-      // Use POST endpoint with custom dependency keys
-      return this.request<GraphDatasetEntry[]>(
-        "POST",
-        `/graph/uuids/${encodedUuid}`,
-        { dependency_keys: dependencyKeys }
+    const custom = dependencyKeys !== undefined && dependencyKeys.length > 0;
+    const datasets: GraphDatasetEntry[] = [];
+    for (let page = 1; ; page++) {
+      const url =
+        `${this.baseUrl}/graph/uuids/${encodedUuid}` +
+        `?page=${page}&page_size=${GRAPH_PAGE_SIZE}`;
+      const response = await this.fetchImpl(url, {
+        method: custom ? "POST" : "GET",
+        headers: this.getHeaders(),
+        body: custom
+          ? JSON.stringify({ dependency_keys: dependencyKeys })
+          : undefined,
+      });
+      if (!response.ok) {
+        await this.handleErrorResponse(response);
+      }
+      const data: GraphDatasetEntry[] = await response.json();
+      datasets.push(...data);
+      const { pages } = parsePaginationHeader(
+        response.headers.get("x-pagination"),
+        GRAPH_PAGE_SIZE,
+        data.length
       );
+      if (page >= pages || data.length === 0) {
+        return datasets;
+      }
     }
-    // Use default GET endpoint
-    return this.request<GraphDatasetEntry[]>("GET", `/graph/uuids/${encodedUuid}`);
   }
 }
