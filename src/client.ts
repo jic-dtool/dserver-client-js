@@ -12,7 +12,6 @@ import {
   UploadCompleteResponse,
   AdminMetadata,
   Manifest,
-  ManifestItem,
   DownloadOptions,
   UploadOptions,
   FileToUpload,
@@ -37,7 +36,6 @@ import {
   UserInfo,
   UserRequest,
   BaseURIInfo,
-  BaseURIPermissionsRequest,
   // Dependency graph types
   GraphDatasetEntry,
 } from "./types";

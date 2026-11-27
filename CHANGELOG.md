@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Development dependencies updated to their latest versions (TypeScript 7,
+  Vitest 5 with Vite 8, ESLint 10, @types/node 26, vue 3.5).
+- Built with tsdown instead of tsup (same output files). TypeScript 7 does
+  the type checking (`npm run typecheck`); tools that need the TypeScript
+  JavaScript API, which TypeScript 7.0 does not have (tsdown's declaration
+  build, typescript-eslint), use TypeScript 6 through
+  `@typescript/typescript6`, as recommended for TypeScript 7.0.
+- `npm run lint` works: ESLint flat configuration (`eslint.config.mjs`) with
+  the recommended rules of ESLint and typescript-eslint; unused imports
+  removed.
+- CI tests on Node.js 22, 24 and 26 (the development tools need Node 22).
+
 ### Fixed
 
 - `getDependencyGraph()` fetches every page of the graph; it returned only

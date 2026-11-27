@@ -16,7 +16,6 @@ import {
   FileToUpload,
   UploadOptions,
   DownloadOptions,
-  DServerError,
 } from "./types";
 
 /**
