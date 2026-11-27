@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Development dependencies updated to their latest versions (TypeScript 6,
-  tsup 9, Vitest 5 with Vite 8, ESLint 10, @types/node 26, vue 3.5).
-  TypeScript 7 is held back: tsup needs the TypeScript JavaScript API, which
-  TypeScript 7 no longer provides.
+- Development dependencies updated to their latest versions (TypeScript 7,
+  Vitest 5 with Vite 8, ESLint 10, @types/node 26, vue 3.5).
+- Built with tsdown instead of tsup (same output files). TypeScript 7 does
+  the type checking (`npm run typecheck`); tools that need the TypeScript
+  JavaScript API, which TypeScript 7.0 does not have (tsdown's declaration
+  build, typescript-eslint), use TypeScript 6 through
+  `@typescript/typescript6`, as recommended for TypeScript 7.0.
 - `npm run lint` works: ESLint flat configuration (`eslint.config.mjs`) with
   the recommended rules of ESLint and typescript-eslint; unused imports
   removed.
