@@ -7,5 +7,9 @@ export default defineConfig({
   format: ["esm", "cjs"],
   platform: "neutral",
   dts: true,
-  clean: true,
+  // Overwrite dist/ in place instead of emptying it first: the webapp links
+  // this package, and its dev server fails to resolve it (and keeps failing)
+  // if a rebuild, e.g. npm's "prepare" on installing the webapp, happens to
+  // run while dist/ is empty. The output file names are always the same.
+  clean: false,
 });
